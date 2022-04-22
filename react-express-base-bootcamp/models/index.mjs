@@ -2,6 +2,10 @@ import { Sequelize } from 'sequelize';
 import url from 'url';
 import allConfig from '../config/config.js';
 
+import initUserModel from './user.mjs';
+import initTripModel from './trip.mjs';
+import initCategoryModel from './category.mjs';
+
 const env = process.env.NODE_ENV || 'development';
 
 const config = allConfig[env];
@@ -32,5 +36,17 @@ if (env === 'production') {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+db.User = initUserModel(sequelize, Sequelize.DataTypes);
+db.Category = initCategoryModel(sequelize, Sequelize.DataTypes);
+db.Trip = initTripModel(sequelize, Sequelize.DataTypes);
+
+// many to many table
+db.User.belongsToMany(db.Trip, { through: 'trip_users' });
+db.Trip.belongsToMany(db.User, { through: 'trip_users' });
+
+// one to many table
+db.Trip.belongsTo(db.Category);
+db.Category.hasMany(db.Trip);
 
 export default db;

@@ -24,8 +24,8 @@
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
-    "axios": "^0.21.1",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.5",
+    "axios": "^0.21.4",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.0.1",
     "eslint": "^7.17.0",
@@ -44,7 +44,7 @@
     "react-refresh": "^0.9.0",
     "sass": "^1.32.2",
     "sass-loader": "^10.1.0",
-    "sequelize-cli": "^6.2.0",
+    "sequelize-cli": "^6.4.1",
     "webpack": "^5.11.1",
     "webpack-cli": "^4.3.1",
     "webpack-dev-middleware": "^4.0.2",
@@ -56,8 +56,9 @@
     "cookie-parser": "^1.4.5",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
+    "google-maps-react": "^2.0.6",
     "method-override": "^3.0.0",
-    "pg": "^8.5.1",
-    "sequelize": "^6.3.5"
+    "pg": "^8.7.3",
+    "sequelize": "^6.19.0"
   }
 }
