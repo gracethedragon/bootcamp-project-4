@@ -1,134 +1,100 @@
 import React, { useState } from 'react';
 import axios from 'axios'
 
-export default function Form({addFormFields}) {
-  const initialValues= {
+export default function Form() {
+  const data = {
     location:'',
     transport:'',
     time:'',
     type:''
   }
 
-  const [formValues, setFormValues] = useState(initialValues)
+  const [formFields, setFormFields] = useState([data])
 
-  const handleInputChange = (event) => {
-    const {name, value} = event.target
+  const handleFieldsAdd =()=>{
+    setFormFields([...formFields, data])
+    console.log(formFields)
+  }
 
-    setFormValues({
-      ...formValues,
-      [name]: value
+  const handleFieldsRemove =(index)=>{
+    const list = [...formFields]
+    console.log(index)
+    list.splice(index,1)
+    setFormFields(list)
+    console.log(formFields)
+  }
+
+  const handleInputChange = (event, index) => {
+    const newFormFields = formFields.map(field => {
+      if(index === formFields.indexOf(field)) {
+        field[event.target.name] = event.target.value
+      }
+      return field;
     })
+    setFormFields(newFormFields);
   }
 
-  const handleSubmit =()=>{
-    const newTrip = {data:{
-      location: formValues.location,
-      transport: formValues.transport,
-      time: formValues.time,
-      type: formValues.type
-    }
-    }
-    axios.post('/trips', newTrip).then(result=>{
-      console.log(result)
-    })
-  }
-
-  const [formFields, setFormFields] = useState (1)
-
-  const addFields =(event)=>{
-    setFormFields (formFields + 1)
-    console.log(formFields, setFormFields)
-  }
-    return (
-     <div>
-       <h2>Submit a trip!</h2>
-       <div>
-        <label>
-          Location
-          <input
-          name='location'
-          value={formValues.location}
-          onChange={handleInputChange} />
-        </label>
-        {/* <label>
-          Transport
-          <input
-          name='transport'
-          value={formValues.transport}
-          onChange={handleInputChange} />
-        </label> */}
-        <label>
-          Time
-          <input
-          name='time'
-          value={formValues.time}
-          onChange={handleInputChange} />
-        </label>
-        <label>
-          Type
-          <input
-          name='type'
-          value={formValues.type}
-          onChange={handleInputChange} />
-        </label>
-       </div>
-       <button onClick={addFormFields}>add</button>
-
-       <button onClick={handleSubmit}>Submit</button>
-     </div>
-    )
+   const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    console.log("InputFields", formFields);
+    axios.post('/trips', {formData:formFields}).then((response)=>console.log(response))
   };
 
-function addFormFields(){
-
-    const initialValues= {
-    location:'',
-    transport:'',
-    time:'',
-    type:''
-  }
-
-  const [formValues, setFormValues] = useState(initialValues)
-
-  const handleInputChange = (event) => {
-    const {name, value} = event.target
-
-    setFormValues({
-      ...formValues,
-      [name]: value
-    })
-  }
-    console.log('clicked')
-    
-    return (
+  return (
      <div>
-       <label>
-         Location
-         <input
-         name='location'
-         value={formValues.location}
-         onChange={handleInputChange} />
-       </label>
-       <label>
-         Transport
-         <input
-         name='transport'
-         value={formValues.transport}
-         onChange={handleInputChange} />
-       </label>
-       <label>
-         Time
-         <input
-         name='time'
-         value={formValues.time}
-         onChange={handleInputChange} />
-       </label>
-       <label>
-         Type
-         <input
-         name='type'
-         value={formValues.type}
-         onChange={handleInputChange} />
-       </label>
-    </div>)
+       <h2>Submit a trip!</h2>
+
+       {formFields.map((field, index) => (
+
+        <div className="formField" id = {index} key={index}>
+            <div className="stop">
+              Stop {index +1}
+            </div>
+
+            {index !== 0 &&
+            <><div className="transport">
+               <label>Transport</label>
+               <input name='transport' value={field.transport} onChange={(event) => handleInputChange(event, index)} />
+             </div><div className="time">
+                 <label>Time</label>
+                 <input name='time' value={field.time} onChange={(event) => handleInputChange(event, index)} />
+               </div></>
+            }
+            <div className="location">
+              <label>Location</label>
+              <input name='location' value={field.location} onChange={(event)=>handleInputChange(event, index)}/>
+            </div>
+            
+            
+
+            <div className="type">
+              <label>Type</label>
+              <input name='type' value={field.type} onChange={(event)=>handleInputChange(event, index)}/>
+            </div>
+            
+          <div className="refereces">
+            <label>References</label>
+            <input name='references'/>
+          </div>
+          
+          
+          {index !== 0 &&
+            <div className="remove">
+              <button onClick={()=>handleFieldsRemove(index)}>remove</button> 
+            </div>
+            }
+        </div>
+       ))}
+       
+       
+        <button onClick={handleFieldsAdd}>add</button>    
+        <button onClick={handleSubmit}>Submit</button>
+     </div>
+     
+    
+    )
+    
+    
 }
+
