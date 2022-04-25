@@ -1,11 +1,7 @@
 export default function initTripsController (db) {
   const show = async (req, res) => {
     try {
-      const items = await db.Trip.findOne({
-        where:{
-          id: 1
-        }
-      })
+      const items = await db.Trip.findAll()
       res.send({ items })
     } catch (error) {
       console.log(error)
@@ -13,10 +9,11 @@ export default function initTripsController (db) {
   }
   const create = async (req, res) =>{
     try {
-      console.log(req.body.formData, 'tryy')
+      console.log(req.body, 'tryy')
       const newTrip = await db.Trip.create({
         categoryId: 1,
-        data: req.body.formData
+        name: req.body.formData.title,
+        data: req.body.formData.formFields
       })
 
       const user = await db.User.findOne({

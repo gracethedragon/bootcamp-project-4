@@ -25,10 +25,10 @@ module.exports = {
     const trips = 
       [{
         category_id: 1,
-        data: JSON.stringify({
-          "name": "urban adventure",
-          "data" : [
-            {
+        name:"happy day out!",
+        length:"",
+        data: JSON.stringify(
+          [{
             Stop: 0,
             Location: "hotel",
             Transport: null,
@@ -49,7 +49,7 @@ module.exports = {
             Time: 1,
             Type: "fnb"
             }
-        ]}),
+        ]),
         created_at: new Date(),
         updated_at: new Date(),
       }]

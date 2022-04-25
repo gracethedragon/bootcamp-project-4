@@ -10,6 +10,7 @@ export default function Form() {
   }
 
   const [formFields, setFormFields] = useState([data])
+  const [title, setTitle] = useState('')
 
   const handleFieldsAdd =()=>{
     setFormFields([...formFields, data])
@@ -33,21 +34,38 @@ export default function Form() {
     })
     setFormFields(newFormFields);
   }
+  let formData = {}
 
-   const handleSubmit = (e) => {
+  const getTitleValue=(event)=>{
+    setTitle(event.target.value)
+    console.log('get title')
+  }
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     
-    console.log("InputFields", formFields);
-    axios.post('/trips', {formData:formFields}).then((response)=>console.log(response))
+   
+    console.log("InputFields", formFields, title)
+   
+    axios.post('/trips', {
+      formData:
+      {title,
+      formFields}
+    }).then((response)=>console.log(response))
   };
 
   return (
      <div>
        <h2>Submit a trip!</h2>
-
+        
+      <label>Title</label>
+      <input name="title" type="text" onChange={getTitleValue} />
        {formFields.map((field, index) => (
 
         <div className="formField" id = {index} key={index}>
+            {index === 0 &&
+              <></>
+            }
             <div className="stop">
               Stop {index +1}
             </div>
@@ -57,20 +75,25 @@ export default function Form() {
                <label>Transport</label>
                <input name='transport' value={field.transport} onChange={(event) => handleInputChange(event, index)} />
              </div><div className="time">
-                 <label>Time</label>
-                 <input name='time' value={field.time} onChange={(event) => handleInputChange(event, index)} />
+                 <label>Travel Time (minutes)</label>
+                 <input type="number" name='time' value={field.time} onChange={(event) => handleInputChange(event, index)} />
                </div></>
             }
             <div className="location">
               <label>Location</label>
-              <input name='location' value={field.location} onChange={(event)=>handleInputChange(event, index)}/>
+              <input type="text" name='location' value={field.location} onChange={(event)=>handleInputChange(event, index)}/>
             </div>
-            
-            
 
             <div className="type">
               <label>Type</label>
-              <input name='type' value={field.type} onChange={(event)=>handleInputChange(event, index)}/>
+              <select name='type' value={field.type} onChange={(event)=>handleInputChange(event, index)}>
+                <option value="accommodation">accommodation</option>
+                <option value="food">f000d</option>
+                <option value="drinks">drinks</option>
+                <option value="shopping">shopping</option>
+                <option value="museums">museums/galleries</option>
+            </select>
+              {/* <input name='type' value={field.type} onChange={(event)=>handleInputChange(event, index)}/> */}
             </div>
             
           <div className="refereces">

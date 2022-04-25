@@ -57,6 +57,12 @@ module.exports = {
           key: 'id',
         },
       },
+      name: {
+        type: Sequelize.STRING,
+      },
+      length: {
+        type: Sequelize.STRING,
+      },
       data: {
         type: Sequelize.JSON,
       },

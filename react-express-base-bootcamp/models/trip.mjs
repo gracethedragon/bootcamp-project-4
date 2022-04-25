@@ -15,6 +15,12 @@ export default function initTripModel(sequelize, DataTypes) {
           key: 'id',
         },
       },
+      name: {
+        type: DataTypes.STRING
+      },
+      length: {
+        type: DataTypes.STRING
+      },
       data: {
         type: DataTypes.JSON
       },
