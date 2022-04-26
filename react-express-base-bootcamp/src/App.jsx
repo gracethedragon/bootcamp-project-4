@@ -4,19 +4,18 @@ import BrowseAll from './components/BrowseTrips.jsx'
 import axios from 'axios'
 
 export default function App() {
-  const [showForm, setShowForm] = useState(false);  
+  const [createTrip, setCreateTrip] = useState(false);  
   const [browseTrip, setBrowseTrip] = useState(false);  
 
-  const submit = () => {
+  const create = () => {
     console.log('clicked show') 
     browseTrip === true ? setBrowseTrip(false) : null
-    return setShowForm(!showForm);
+    return setCreateTrip(!createTrip);
   }
 
   const browse = () => {
     console.log('clicked browse')
-    
-    showForm === true ? setShowForm(false) : null
+    createTrip === true ? setCreateTrip(false) : null
     return setBrowseTrip(!browseTrip);
   }
 
@@ -30,15 +29,10 @@ export default function App() {
           
         </div>
       )}
-      <BrowseMyExisting/>
-        {/* <button onClick={submit}>submit a trip</button>
-      {showForm && (
-        <div>  
-          <div>this is the form</div>
-          <Form itineraryTitle={itineraryTitle}/>
-        </div>
-      )} */}
-      
+      <button onClick={create}>create a trip</button>
+      {createTrip && (
+        <div><BrowseMyExisting/></div>
+      )}
     </div>
   )
 }

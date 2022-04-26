@@ -38,17 +38,29 @@ export default function Form({itineraryTitle}) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("InputFields", formFields, title)
-    axios.post('/trips', {
+    console.log("InputFields", formFields, itineraryTitle)
+
+    if(itineraryTitle.id) {
+      console.log('itinerary exists')
+      axios.post('/existingtrips', {
+        formData:{
+          title: itineraryTitle,
+          formFields
+        }
+      }).then((response)=>console.log(response))
+    } else {
+      console.log(' does not exist')
+      axios.post('/trips', {
       formData:
       {title: itineraryTitle,
       formFields}
-    }).then((response)=>console.log(response))
+      }).then((response)=>console.log(response))
+    }
+    
   };
 
   return (
      <div>
-      
       {itineraryTitle && (
       <div>
         <h2>{itineraryTitle.title}</h2>
@@ -161,8 +173,9 @@ export function BrowseMyExisting (){
 
     return (
     <div>
-      <h2>list of trips</h2>
-      <select onChange={handleChange}>
+      <h2>existing trips</h2>
+      <select onChange={handleChange} defaultValue={'DEFAULT'}>
+        <option value="DEFAULT" disabled>---Choose one---</option>
         <option value="new">Create new itinerary</option>
         {myTrips && 
         myTrips.map((myTrip)=>{
@@ -178,7 +191,9 @@ export function BrowseMyExisting (){
          </div>
       )
       }
+      <div>
       <button onClick={submit}>create an itinerary</button>
+      </div>  
       {showForm && (
         <div>  
           <div>this is the form</div>
