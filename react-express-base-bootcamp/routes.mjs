@@ -9,4 +9,5 @@ export default function routes(app) {
   });
   app.get('/trips', TripsController.show);
   app.post('/trips', TripsController.create);
+  app.get('/mytrips', TripsController.showMine);
 }

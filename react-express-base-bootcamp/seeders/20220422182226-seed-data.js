@@ -9,65 +9,69 @@ module.exports = {
         updated_at: new Date(),
       }]
 
-    const categories = [
+    const trips = [
       {
-        name:'city',
+        user_id: 1,
+        name:'Sunny Singapore',
+        length: 3,
+        country: 'Singapore',
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
-        name:'outdoor',
+        user_id: 1,
+        name:'Nippon Fun',
+        length: 1,
+        country:'Japan',
         created_at: new Date(),
         updated_at: new Date(),
       },
     ]
     
-    const trips = 
+    const days = 
       [{
-        category_id: 1,
-        name:"happy day out!",
-        length:"",
+        trip_id: 1,
         data: JSON.stringify(
           [{
-            Stop: 0,
             Location: "hotel",
             Transport: null,
-            Time: 0.5,
+            Time: 30,
             Type: "accommodation"
             },
             {
-            Stop: 1,
             Location: "museum",
             Transport: "bus",
-            Time: 1,
+            Time: 60,
             Type: "museum"
             }, 
             {
-            Stop: 2,
             Location: "cafe",
             Transport: "walk",
-            Time: 1,
-            Type: "fnb"
+            Time: 20,
+            Type: "food"
             }
         ]),
         created_at: new Date(),
         updated_at: new Date(),
       }]
-    const tripUsers = [{
+
+    const tripDays = [{
       trip_id: 1,
-      user_id: 1
+      day_id: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     }]
 
     await queryInterface.bulkInsert('users', users);
-    await  queryInterface.bulkInsert('categories', categories);
-    await queryInterface.bulkInsert('trips', trips);
-    queryInterface.bulkInsert('trip_users', tripUsers);
+    await  queryInterface.bulkInsert('trips', trips);
+    await queryInterface.bulkInsert('days', days);
+    await queryInterface.bulkInsert('trip_days', tripDays);
   },
 
   down: async (queryInterface) => {
-    await queryInterface.bulkDelete('trip_users', null);
+    await queryInterface.bulkDelete('trip_days', null);
+    await queryInterface.bulkDelete('days', null);
     await queryInterface.bulkDelete('trips', null);
-    await queryInterface.bulkDelete('categories', null);
     await queryInterface.bulkDelete('users', null);
   },
 };

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
-export default function Form() {
+
+export default function Form({itineraryTitle}) {
+  console.log(itineraryTitle, 'itinerarytitle')
   const data = {
     location:'',
     transport:'',
@@ -10,7 +12,6 @@ export default function Form() {
   }
 
   const [formFields, setFormFields] = useState([data])
-  const [title, setTitle] = useState('')
 
   const handleFieldsAdd =()=>{
     setFormFields([...formFields, data])
@@ -34,32 +35,28 @@ export default function Form() {
     })
     setFormFields(newFormFields);
   }
-  let formData = {}
-
-  const getTitleValue=(event)=>{
-    setTitle(event.target.value)
-    console.log('get title')
-  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-   
     console.log("InputFields", formFields, title)
-   
     axios.post('/trips', {
       formData:
-      {title,
+      {title: itineraryTitle,
       formFields}
     }).then((response)=>console.log(response))
   };
 
   return (
      <div>
+      
+      {itineraryTitle && (
+      <div>
+        <h2>{itineraryTitle.title}</h2>
+      </div> 
+      )}
+      
        <h2>Submit a trip!</h2>
         
-      <label>Title</label>
-      <input name="title" type="text" onChange={getTitleValue} />
        {formFields.map((field, index) => (
 
         <div className="formField" id = {index} key={index}>
@@ -121,3 +118,73 @@ export default function Form() {
     
 }
 
+export function BrowseMyExisting (){
+  const [myTrips, setMyTrips]= useState()
+  const [newTrip, setNewTrip]= useState(false)
+  const [showForm, setShowForm] = useState(false);  
+  const [title, setTitle] = useState({title:'', id:''})
+
+  const handleChange =(event)=>{
+    const selectedOption = event.target.options[event.target.selectedIndex].text
+    console.log(event.target.options[event.target.selectedIndex].text, 'selected')
+    if (selectedOption === 'Create new itinerary'){
+      setNewTrip(true)
+    } else {
+      setNewTrip (false) 
+      setTitle({ title: selectedOption, id: event.target.value})
+      console.log(title, 'title')
+    } 
+  }
+
+  const handleInputChange=(event)=>{
+    console.log(event.target.value,' event')
+    setTitle({title:event.target.value})
+    console.log(title, 'title')
+  }
+
+  const submit = () => {
+    console.log('clicked show') 
+    console.log(title)
+    return setShowForm(!showForm);
+  }
+
+  useEffect(()=>{
+      axios
+      .get('/mytrips')
+      .then((response)=>{
+      console.log('response', response.data.myTrips)
+      const responseTrips = response.data.myTrips
+      setMyTrips(responseTrips)
+      })
+    }, [])
+    console.log(myTrips, 'my trips')
+
+    return (
+    <div>
+      <h2>list of trips</h2>
+      <select onChange={handleChange}>
+        <option value="new">Create new itinerary</option>
+        {myTrips && 
+        myTrips.map((myTrip)=>{
+          return(
+          <option key={myTrip.id} value={myTrip.id}>{myTrip.name}</option>
+          )
+        })   
+        }
+      </select>
+      {newTrip && (
+        <div>
+         <input name="title" type="text" onChange={handleInputChange} />
+         </div>
+      )
+      }
+      <button onClick={submit}>create an itinerary</button>
+      {showForm && (
+        <div>  
+          <div>this is the form</div>
+          <Form itineraryTitle={title}/>
+        </div>
+      )}
+    </div>
+    )
+}

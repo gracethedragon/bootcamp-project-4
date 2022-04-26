@@ -23,14 +23,28 @@ module.exports = {
       },
 
     });
-    await queryInterface.createTable('categories', {
+
+    await queryInterface.createTable('trips', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      },
       name: {
+        type: Sequelize.STRING,
+      },
+      length: {
+        type: Sequelize.INTEGER,
+      },
+      country: {
         type: Sequelize.STRING,
       },
       created_at: {
@@ -43,25 +57,19 @@ module.exports = {
       },
 
     });
-    await queryInterface.createTable('trips', {
+    await queryInterface.createTable('days', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      category_id: {
+      trip_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'categories',
+          model: 'trips',
           key: 'id',
         },
-      },
-      name: {
-        type: Sequelize.STRING,
-      },
-      length: {
-        type: Sequelize.STRING,
       },
       data: {
         type: Sequelize.JSON,
@@ -75,7 +83,7 @@ module.exports = {
         type: Sequelize.DATE,
       },
     });
-    await queryInterface.createTable('trip_users', {
+    await queryInterface.createTable('trip_days', {
       trip_id: {
         type: Sequelize.INTEGER,
         references: {
@@ -83,10 +91,10 @@ module.exports = {
           key: 'id',
         },
       },
-      user_id: {
+      day_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'users',
+          model: 'days',
           key: 'id',
         },
       },
@@ -103,9 +111,9 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('trip_users');
+    await queryInterface.dropTable('trip_days');
+    await queryInterface.dropTable('days');
     await queryInterface.dropTable('trips');
-    await queryInterface.dropTable('categories');
     await queryInterface.dropTable('users');
   },
 };

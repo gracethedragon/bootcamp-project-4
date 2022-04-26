@@ -1,6 +1,6 @@
-export default function initCategoryModel(sequelize, DataTypes) {
+export default function initDayModel(sequelize, DataTypes) {
   return sequelize.define(
-    'category',
+    'day',
     {
       id: {
         allowNull: false,
@@ -8,8 +8,15 @@ export default function initCategoryModel(sequelize, DataTypes) {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      name: {
-        type: DataTypes.STRING,
+      tripId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'trips',
+          key: 'id',
+        },
+      },
+       data: {
+        type: DataTypes.JSON,
       },
       createdAt: {
         allowNull: false,
@@ -23,7 +30,7 @@ export default function initCategoryModel(sequelize, DataTypes) {
     {
       // The underscored option makes Sequelize reference snake_case names in the DB.
       underscored: true,
-       tableName: 'categories',
+       tableName: 'days',
     }
   );
 }

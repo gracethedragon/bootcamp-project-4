@@ -4,7 +4,7 @@ import allConfig from '../config/config.js';
 
 import initUserModel from './user.mjs';
 import initTripModel from './trip.mjs';
-import initCategoryModel from './category.mjs';
+import initDayModel from './day.mjs';
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -38,15 +38,15 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.User = initUserModel(sequelize, Sequelize.DataTypes);
-db.Category = initCategoryModel(sequelize, Sequelize.DataTypes);
+db.Day = initDayModel(sequelize, Sequelize.DataTypes);
 db.Trip = initTripModel(sequelize, Sequelize.DataTypes);
 
 // many to many table
-db.User.belongsToMany(db.Trip, { through: 'trip_users' });
-db.Trip.belongsToMany(db.User, { through: 'trip_users' });
+db.Day.belongsToMany(db.Trip, { through: 'trip_days' });
+db.Trip.belongsToMany(db.Day, { through: 'trip_days' });
 
 // one to many table
-db.Trip.belongsTo(db.Category);
-db.Category.hasMany(db.Trip);
+db.Trip.belongsTo(db.User);
+db.User.hasMany(db.Trip);
 
 export default db;

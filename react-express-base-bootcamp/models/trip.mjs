@@ -8,10 +8,10 @@ export default function initTripModel(sequelize, DataTypes) {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      category_id: {
-        type: DataTypes.STRING,
+      userId: {
+        type: DataTypes.INTEGER,
          references: {
-          model: 'categories',
+          model: 'users',
           key: 'id',
         },
       },
@@ -21,8 +21,8 @@ export default function initTripModel(sequelize, DataTypes) {
       length: {
         type: DataTypes.STRING
       },
-      data: {
-        type: DataTypes.JSON
+      country: {
+        type: DataTypes.STRING
       },
       createdAt: {
         allowNull: false,

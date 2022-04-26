@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import Form from './components/TripForm.jsx'
-import Browse from './components/BrowseTrips.jsx'
+import Form,  {BrowseMyExisting }from './components/TripForm.jsx'
+import BrowseAll from './components/BrowseTrips.jsx'
 import axios from 'axios'
 
 export default function App() {
@@ -26,16 +26,18 @@ export default function App() {
       {browseTrip && (
         <div>
           <div>this is the browse</div>
-          <Browse/>
+          <BrowseAll/>
+          
         </div>
       )}
-        <button onClick={submit}>submit a trip</button>
+      <BrowseMyExisting/>
+        {/* <button onClick={submit}>submit a trip</button>
       {showForm && (
-        <div>
+        <div>  
           <div>this is the form</div>
-          <Form/>
+          <Form itineraryTitle={itineraryTitle}/>
         </div>
-      )}
+      )} */}
       
     </div>
   )
