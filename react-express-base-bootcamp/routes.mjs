@@ -11,4 +11,5 @@ export default function routes(app) {
   app.post('/trips', TripsController.create);
   app.post('/existingtrips', TripsController.add)
   app.get('/mytrips', TripsController.showMine);
+  app.get('/trips/:id', TripsController.showOne)
 }

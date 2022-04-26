@@ -66,9 +66,7 @@ export default function Form({itineraryTitle}) {
         <h2>{itineraryTitle.title}</h2>
       </div> 
       )}
-      
-       <h2>Submit a trip!</h2>
-        
+
        {formFields.map((field, index) => (
 
         <div className="formField" id = {index} key={index}>
@@ -95,7 +93,9 @@ export default function Form({itineraryTitle}) {
 
             <div className="type">
               <label>Type</label>
-              <select name='type' value={field.type} onChange={(event)=>handleInputChange(event, index)}>
+              <select name='type' onChange={(event)=>handleInputChange(event, index)}
+                defaultValue={'DEFAULT'}>
+                <option value="DEFAULT" disabled>---Choose one---</option>
                 <option value="accommodation">accommodation</option>
                 <option value="food">f000d</option>
                 <option value="drinks">drinks</option>
@@ -116,6 +116,7 @@ export default function Form({itineraryTitle}) {
               <button onClick={()=>handleFieldsRemove(index)}>remove</button> 
             </div>
             }
+            <hr></hr>
         </div>
        ))}
        
@@ -134,7 +135,7 @@ export function BrowseMyExisting (){
   const [myTrips, setMyTrips]= useState()
   const [newTrip, setNewTrip]= useState(false)
   const [showForm, setShowForm] = useState(false);  
-  const [title, setTitle] = useState({title:'', id:''})
+  const [title, setTitle] = useState({title:'', country:'', id:''})
 
   const handleChange =(event)=>{
     const selectedOption = event.target.options[event.target.selectedIndex].text
@@ -149,9 +150,24 @@ export function BrowseMyExisting (){
   }
 
   const handleInputChange=(event)=>{
-    console.log(event.target.value,' event')
-    setTitle({title:event.target.value})
-    console.log(title, 'title')
+    console.log(event)
+
+    setTitle({...title,
+      [event.target.name]: event.target.value})
+    
+    console.log(title)
+    
+    // console.log(event.target.value,' event')
+    // setTitle({title:event.target.value})
+    // console.log(title, 'title')
+
+    // const newTitleFields = title.map(field => {
+    //   if(event.target.name === field[event.target.name]) {
+    //     field[event.target.name] = event.target.value
+    //   }
+    //   return field;
+    // })
+    // setTitle(newTitleFields);
   }
 
   const submit = () => {
@@ -187,19 +203,17 @@ export function BrowseMyExisting (){
       </select>
       {newTrip && (
         <div>
-         <input name="title" type="text" onChange={handleInputChange} />
+         <input name="title" type="text" onChange={(event)=>handleInputChange(event)} />
+          <input name="country" type="text" onChange={(event)=>handleInputChange(event)} />
          </div>
       )
       }
       <div>
       <button onClick={submit}>create an itinerary</button>
       </div>  
-      {showForm && (
-        <div>  
-          <div>this is the form</div>
-          <Form itineraryTitle={title}/>
-        </div>
-      )}
+      {showForm &&
+        <Form itineraryTitle={title}/>
+      }
     </div>
     )
 }

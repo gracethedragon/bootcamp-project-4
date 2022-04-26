@@ -14,7 +14,7 @@ export default function initTripsController (db) {
         userId: 1,
         name: req.body.formData.title.title,
         length: 1,
-        country: 'placeholder',  
+        country: req.body.formData.title.country,  
       })
       console.log(newTrip.id, 'trip')
 
@@ -55,7 +55,6 @@ export default function initTripsController (db) {
     }
   }
 
-
   const showMine = async(req,res)=>{
     try {
       const myTrips = await db.Trip.findAll({
@@ -69,10 +68,26 @@ export default function initTripsController (db) {
     }
   }
 
+  const showOne = async (req,res)=>{
+    try{
+      console.log(req.params.id, 'tripId')
+      const tripDays = await db.Day.findAll({
+        where:{
+          tripId: req.params.id
+        }
+      })
+
+      res.send(tripDays)
+    }catch (error){
+      console.log(error)
+    }
+  }
+
   return {
     show,
     create,
     add,
-    showMine
+    showMine,
+    showOne
   }
 }
