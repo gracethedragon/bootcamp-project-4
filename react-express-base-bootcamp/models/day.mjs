@@ -30,7 +30,8 @@ export default function initDayModel(sequelize, DataTypes) {
     {
       // The underscored option makes Sequelize reference snake_case names in the DB.
       underscored: true,
-       tableName: 'days',
+      tableName: 'days',
+       
     }
   );
 }

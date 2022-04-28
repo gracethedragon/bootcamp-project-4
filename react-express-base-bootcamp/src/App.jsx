@@ -6,6 +6,7 @@ import axios from 'axios'
 
 export default function App() {
   const [createTrip, setCreateTrip] = useState(false);  
+  const [myTrip, setMytrip] = useState(false)
   const [browseTrip, setBrowseTrip] = useState(false);  
   const [displaySelected, setDisplaySelected] = useState(false)
   const [showSelectedTrip, setShowSelectedTrip] = useState('')
@@ -13,28 +14,36 @@ export default function App() {
   const create = () => {
     console.log('clicked show') 
     setShowSelectedTrip('')
-    return setCreateTrip(!createTrip);
+    setBrowseTrip(false)
+    return setCreateTrip(true);
   }
 
   const browse = () => {
     console.log('clicked browse', showSelectedTrip, browseTrip) 
     setShowSelectedTrip('')
-    return setBrowseTrip(!browseTrip);
+    setCreateTrip(false)
+    return setBrowseTrip(true);
+  }
+
+  const browseMine = () =>{
+    console.log('clicked browse mine')
   }
 
   useEffect(()=>{
     console.log(showSelectedTrip, browseTrip, createTrip)
     if(showSelectedTrip!== ''){
+      console.log('1')
       setDisplaySelected(true)
       setBrowseTrip(false)
       setCreateTrip(false)
     }
-    else if(browseTrip){
+    if(browseTrip){
+      console.log('2')
       setCreateTrip(false)
       setDisplaySelected(false)
-      
     }
-    else if(createTrip){
+    if(createTrip){
+      console.log('2')
       setBrowseTrip(false)
       setDisplaySelected(false)
       setShowSelectedTrip('')
@@ -43,7 +52,8 @@ export default function App() {
   }, [createTrip, browseTrip, showSelectedTrip])
   return (
     <div>
-        <button onClick={browse}>view trips</button>
+        <button onClick={browseMine}>view my trips</button>
+        <button onClick={browse}>browse all trips</button>
         <button onClick={create}>create a trip</button>
         {browseTrip && 
           <BrowseAll setShowSelectedTrip={setShowSelectedTrip}/>}       

@@ -8,14 +8,15 @@ export default function Form({itineraryTitle}) {
     location:'',
     transport:'',
     time:'',
-    type:''
+    type:'',
+    reference:''
   }
 
   const [formFields, setFormFields] = useState([data])
 
   const handleFieldsAdd =()=>{
     setFormFields([...formFields, data])
-    console.log(formFields)
+    console.log(formFields, 'formfields')
   }
 
   const handleFieldsRemove =(index)=>{
@@ -105,9 +106,9 @@ export default function Form({itineraryTitle}) {
               {/* <input name='type' value={field.type} onChange={(event)=>handleInputChange(event, index)}/> */}
             </div>
             
-          <div className="refereces">
+          <div className="reference">
             <label>References</label>
-            <input name='references'/>
+            <input type="textarea" name='reference' value={field.reference} onChange={(event)=>handleInputChange(event, index)} />
           </div>
           
           

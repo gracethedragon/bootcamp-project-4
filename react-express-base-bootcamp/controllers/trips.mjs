@@ -71,23 +71,62 @@ export default function initTripsController (db) {
   const showOne = async (req,res)=>{
     try{
       console.log(req.params.id, 'tripId')
+      const tripName = await db.Trip.findOne({
+        where:{
+          id: req.params.id
+        }
+      })
       const tripDays = await db.Day.findAll({
         where:{
           tripId: req.params.id
         }
       })
 
-      res.send(tripDays)
+      res.send({tripDays, tripName})
     }catch (error){
       console.log(error)
     }
   }
+
+  const removeTrip = async(req,res)=>{
+    try{
+      console.log('req id', req.params.id)
+      const id = req.params.id
+
+      const trip = await db.Trip.findByPk(id)
+      const days = await db.Day.findAll({
+        where: {
+          tripId: id
+        }
+      })
+      await trip.removeDays(days)
+      console.log(trip.days, trip.day)
+
+      await db.Day.destroy({
+        where:{
+          tripId: id
+        }
+      })
+      
+      await db.Trip.destroy({
+        where:{
+          id: id
+        }
+      })
+
+      res.send('destroyed')
+      
+    } catch  (error){
+      console.log(error)
+    }
+  } 
 
   return {
     show,
     create,
     add,
     showMine,
-    showOne
+    showOne, 
+    removeTrip
   }
 }
