@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
-
-export default function Form({itineraryTitle}) {
+export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip}) {
   console.log(itineraryTitle, 'itinerarytitle')
   const data = {
     location:'',
@@ -40,7 +39,8 @@ export default function Form({itineraryTitle}) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("InputFields", formFields, itineraryTitle)
-
+    setCreateTrip(false)
+    
     if(itineraryTitle.id) {
       console.log('itinerary exists')
       axios.post('/existingtrips', {
@@ -48,14 +48,22 @@ export default function Form({itineraryTitle}) {
           title: itineraryTitle,
           formFields
         }
-      }).then((response)=>console.log(response))
+      }).then((response)=>{
+        console.log(response)
+        let tripId = response.data.tripId
+        setShowSelectedTrip(tripId)
+      })
     } else {
       console.log(' does not exist')
       axios.post('/trips', {
       formData:
       {title: itineraryTitle,
       formFields}
-      }).then((response)=>console.log(response))
+      }).then((response)=>{
+        console.log(response)
+        let tripId = response.data.tripId
+        setShowSelectedTrip(tripId)
+      })
     }
     
   };
@@ -124,6 +132,7 @@ export default function Form({itineraryTitle}) {
        
         <button onClick={handleFieldsAdd}>add</button>    
         <button onClick={handleSubmit}>Submit</button>
+  
      </div>
      
     
@@ -132,7 +141,7 @@ export default function Form({itineraryTitle}) {
     
 }
 
-export function BrowseMyExisting (){
+export function BrowseMyExisting ({setShowSelectedTrip, setCreateTrip}){
   const [myTrips, setMyTrips]= useState()
   const [newTrip, setNewTrip]= useState(false)
   const [showForm, setShowForm] = useState(false);  
@@ -157,18 +166,7 @@ export function BrowseMyExisting (){
       [event.target.name]: event.target.value})
     
     console.log(title)
-    
-    // console.log(event.target.value,' event')
-    // setTitle({title:event.target.value})
-    // console.log(title, 'title')
-
-    // const newTitleFields = title.map(field => {
-    //   if(event.target.name === field[event.target.name]) {
-    //     field[event.target.name] = event.target.value
-    //   }
-    //   return field;
-    // })
-    // setTitle(newTitleFields);
+   
   }
 
   const submit = () => {
@@ -178,8 +176,9 @@ export function BrowseMyExisting (){
   }
 
   useEffect(()=>{
-      axios
-      .get('/mytrips')
+    let userId = 1
+    axios
+      .get(`/mytrips/${userId}`)
       .then((response)=>{
       console.log('response', response.data.myTrips)
       const responseTrips = response.data.myTrips
@@ -213,7 +212,7 @@ export function BrowseMyExisting (){
       <button onClick={submit}>create an itinerary</button>
       </div>  
       {showForm &&
-        <Form itineraryTitle={title}/>
+        <Form itineraryTitle={title} setShowSelectedTrip={setShowSelectedTrip} setCreateTrip={setCreateTrip}/>
       }
     </div>
     )

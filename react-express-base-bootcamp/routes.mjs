@@ -9,8 +9,9 @@ export default function routes(app) {
   });
   app.get('/trips', TripsController.show);
   app.post('/trips', TripsController.create);
-  app.delete('/trips/:id', TripsController.removeTrip);
+  app.delete('/trips/:tripId', TripsController.removeTrip);
+  app.delete('/trips/:tripId/:dayId', TripsController.removeDay);
   app.post('/existingtrips', TripsController.add)
-  app.get('/mytrips', TripsController.showMine);
+  app.get('/mytrips/:userId', TripsController.showMine);
   app.get('/trips/:id', TripsController.showOne)
 }

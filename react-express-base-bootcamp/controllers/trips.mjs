@@ -11,7 +11,7 @@ export default function initTripsController (db) {
     try {
       console.log(req.body, 'tryy')
       const newTrip = await db.Trip.create({
-        userId: 1,
+        userId: 2,
         name: req.body.formData.title.title,
         length: 1,
         country: req.body.formData.title.country,  
@@ -57,9 +57,10 @@ export default function initTripsController (db) {
 
   const showMine = async(req,res)=>{
     try {
+    const userId = req.params.userId
       const myTrips = await db.Trip.findAll({
         where:{
-          userId: 1
+          userId: userId
         }
       })
       res.send({myTrips})
@@ -90,36 +91,59 @@ export default function initTripsController (db) {
 
   const removeTrip = async(req,res)=>{
     try{
-      console.log('req id', req.params.id)
-      const id = req.params.id
+      const tripId = req.params.tripId
 
-      const trip = await db.Trip.findByPk(id)
+      const trip = await db.Trip.findByPk(tripId)
       const days = await db.Day.findAll({
         where: {
-          tripId: id
+          tripId: tripId
         }
       })
       await trip.removeDays(days)
-      console.log(trip.days, trip.day)
 
       await db.Day.destroy({
         where:{
-          tripId: id
+          tripId: tripId
         }
       })
       
       await db.Trip.destroy({
         where:{
-          id: id
+          id: tripId
         }
       })
-
-      res.send('destroyed')
-      
+      res.send('destroyed') 
     } catch  (error){
       console.log(error)
     }
   } 
+
+  const removeDay = async(req,res) => {
+    try {
+      const tripId = req.params.tripId
+      const dayId = req.params.dayId
+
+      const trip = await db.Trip.findByPk(tripId)
+      const day = await db.Day.findOne({
+        where: {
+          id: dayId
+        }
+      })
+      await trip.removeDay(day)
+
+      await db.Day.destroy({
+        where:{
+          id: dayId
+        }
+      })
+
+      await trip.decrement('length')
+      res.send('destroyed') 
+    } 
+    catch (error) {
+      console.log(error)
+    }
+  }
 
   return {
     show,
@@ -127,6 +151,7 @@ export default function initTripsController (db) {
     add,
     showMine,
     showOne, 
-    removeTrip
+    removeTrip,
+    removeDay
   }
 }

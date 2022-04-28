@@ -1,23 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
-// function remove(id){
-//   const [deleteTrip, setDeleteTrip] = useState(true)
-//   console.log(id)
-//   axios
-//   .delete(`/trips/${id}`)
-//   .then((response)=>console.log('deleted', response))
-//   setDeleteTrip(false)
+export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelectedTrip}){   
+    const [deleteTrip, setDeleteTrip] = useState(false)
+  
+    // delete entire trip
+    const remove=(tripId)=>{
+      setDeleteTrip(true)
+      setShowTrip(false)
+      console.log(tripId)
+      axios
+      .delete(`/trips/${tripId}`)
+      .then((response)=>{
+        console.log(response)
+        setShowSelectedTrip('')
+        setBrowseTrip(true)
+      }) 
+      
+      
+    }
+    // delete trip-day
+    const [deleteDay, setDeleteDay] = useState(false)
 
-//   return (<div>
-//     {!deleteTrip &&
-//     deleted
-// }</div>)
-// }
+    const removeDay=(tripId, dayId)=>{
+      setDeleteDay(!deleteDay)
+      axios.delete(`/trips/${tripId}/${dayId}`)
+      .then((response)=> console.log(response))
+    }
 
-export default function ShowTrip({showSelectedTrip}){
-
-  const [showTrip, setShowTrip]= useState()
+    const [showTrip, setShowTrip]= useState()
     useEffect(()=>{
       axios
       .get(`/trips/${showSelectedTrip}`)
@@ -25,28 +36,16 @@ export default function ShowTrip({showSelectedTrip}){
       console.log('response', response.data)
       const responseTrips = response.data
       setShowTrip(responseTrips)
+      console.log(deleteDay, 'delete')
       })
-    },[showSelectedTrip])
+    },[showSelectedTrip, deleteDay])
     console.log(showTrip, 'trips')
-    
-    const [deleteTrip, setDeleteTrip] = useState(false)
-    const remove=(id)=>{
-      setDeleteTrip(true)
-      setShowTrip(false)
-      console.log(id)
-      axios
-      .delete(`/trips/${id}`)
-      .then((response)=>console.log(response)) 
-    }
-    //   console.log(showTrip.tripName)
+
   return(
     <div>
     {showTrip && 
-    <><h2>{showTrip.tripName.name}, {showTrip.tripName.country}, {showTrip.tripName.length} days</h2><button onClick={() => remove(showTrip.tripName.id)}>Delete entire trip</button></>}
-
-    {deleteTrip &&
-      <h3>trip deleted</h3>
-    }
+    <><h2>{showTrip.tripName.name}, {showTrip.tripName.country}, {showTrip.tripName.length} days</h2><button onClick={() => remove(showTrip.tripName.id)}>Delete entire trip</button>
+    <button>Reorder days</button></>}
 
     {showTrip &&      
       showTrip.tripDays.map((day, index)=>{
@@ -54,7 +53,7 @@ export default function ShowTrip({showSelectedTrip}){
       <div key={"day" + index + 1}>
         Day {index + 1}
         <button>Edit</button>
-        <button>Delete</button>
+        <button onClick={()=>removeDay(day.tripId, day.id, )}>Delete</button>
         {day.data.map((stops, index)=>{ 
           
           return(
