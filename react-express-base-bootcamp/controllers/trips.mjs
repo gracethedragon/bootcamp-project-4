@@ -11,7 +11,7 @@ export default function initTripsController (db) {
     try {
       console.log(req.body, 'tryy')
       const newTrip = await db.Trip.create({
-        userId: 1,
+        userId: req.body.formData.userId,
         name: req.body.formData.title.title,
         length: 1,
         country: req.body.formData.title.country,  

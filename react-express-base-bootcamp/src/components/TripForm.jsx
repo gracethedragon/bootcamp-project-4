@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
 export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip}) {
+  let userId = Number(document.cookie.replace(/(?:(?:^|.*;\s*)userId\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
   console.log(itineraryTitle,'itinerarytitle')
   const data = {
     location:'',
@@ -45,6 +46,7 @@ export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip
       axios.post('/existingtrips', {
         formData:{
           title: itineraryTitle,
+          userId,
           formFields
         }
       }).then((response)=>{
@@ -57,6 +59,7 @@ export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip
       axios.post('/trips', {
       formData:
       {title: itineraryTitle,
+        userId,
       formFields}
       }).then((response)=>{
         console.log(response)
@@ -115,7 +118,7 @@ export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip
             
           <div className="reference">
             <label>References</label>
-            <input type="textarea" name='reference' value={field.reference} onChange={(event)=>handleInputChange(event, index)} />
+            <textarea name='reference' value={field.reference} onChange={(event)=>handleInputChange(event, index)} />
           </div>
           
           
@@ -145,7 +148,7 @@ export function BrowseMyExisting ({setShowSelectedTrip, setCreateTrip}){
   const [newTrip, setNewTrip]= useState(false)
   const [showForm, setShowForm] = useState(false);  
   const [title, setTitle] = useState({title:'', country:'', id:''})
-
+  let userId = Number(document.cookie.replace(/(?:(?:^|.*;\s*)userId\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
   const handleChange =(event)=>{
     const selectedOption = event.target.options[event.target.selectedIndex].text
     console.log(event.target.options[event.target.selectedIndex].text, 'selected')
@@ -175,7 +178,6 @@ export function BrowseMyExisting ({setShowSelectedTrip, setCreateTrip}){
   }
 
   useEffect(()=>{
-    let userId = 1
     axios
       .get(`/mytrips/${userId}`)
       .then((response)=>{

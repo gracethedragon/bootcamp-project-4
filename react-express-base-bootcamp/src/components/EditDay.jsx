@@ -104,7 +104,7 @@ export default function EditDay({dayData, setCreateTrip, setShowTrip, setEditDay
             
           <div className="reference">
             <label>References</label>
-            <input type="textarea" name='reference' value={field.reference} onChange={(event)=>handleInputChange(event, index)} />
+            <textarea name='reference' value={field.reference} onChange={(event)=>handleInputChange(event, index)} />
           </div>
           
           

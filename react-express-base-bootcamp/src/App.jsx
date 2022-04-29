@@ -7,7 +7,8 @@ import { useCookies } from 'react-cookie';
 
 export default function App() {
   const [createTrip, setCreateTrip] = useState(false);  
-  const [myTrip, setMytrip] = useState(false)
+  // const [myTrip, setMytrip] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
   const [browseTrip, setBrowseTrip] = useState(false);  
   const [browseMyTrips, setBrowseMyTrips] = useState(false);  
   const [displaySelected, setDisplaySelected] = useState(false)
@@ -28,6 +29,7 @@ export default function App() {
     setShowSelectedTrip('')
     setCreateTrip(false)
     setBrowseMyTrips(false)
+    setShowLogin(false)
     return setBrowseTrip(true);
   }
 
@@ -39,64 +41,62 @@ export default function App() {
     return setBrowseMyTrips(true);
   }
 
+  const loginPage = () =>{
+    setShowSelectedTrip('')
+    setBrowseTrip(false)
+    setBrowseMyTrips(false)
+    return setShowLogin(true)
+  }
+
   const signOut = () => {
     removeCookie('loggedIn')
     removeCookie('userId')
-    setLoggedIn(false)
+    return setLoggedIn(false)
   }
 
   useEffect(()=>{
-    console.log(showSelectedTrip, browseTrip, createTrip)
+    console.log(showSelectedTrip, browseTrip, browseMyTrips, displaySelected, createTrip)
+   
     if(showSelectedTrip!== ''){
       console.log('1')
+      setBrowseTrip(false)
+      setBrowseMyTrips(false)
+      setCreateTrip(false)
       setDisplaySelected(true)
-      setBrowseTrip(false)
-      setBrowseMyTrips(false)
-      setCreateTrip(false)
-    }
-    if(browseTrip){
-      console.log('2')
-      setCreateTrip(false)
-      setBrowseMyTrips(false)
+    } else if (showSelectedTrip === '') {
       setDisplaySelected(false)
     }
-    if(browseMyTrips){
-      console.log('3')
-      setCreateTrip(false)
-      setBrowseTrip(false)
-      setDisplaySelected(false)
-    }
-    if(createTrip){
-      console.log('4')
-      setBrowseTrip(false)
-      setBrowseMyTrips(false)
-      setDisplaySelected(false)
-      setShowSelectedTrip('')
-    }
-    console.log(showSelectedTrip, browseTrip, browseMyTrips, createTrip)
-  }, [createTrip, browseTrip,browseMyTrips, showSelectedTrip])
+    
+  }, [createTrip, browseTrip, browseMyTrips, showSelectedTrip, showLogin])
   return (
     <div>
-      {!loggedIn &&
-        <Login setLoggedIn={setLoggedIn}/>
-      }
-      {loggedIn && 
-      <div>
-        <button onClick={browseMine}>view my trips</button>
         <button onClick={browse}>browse all trips</button>
+
+        {!loggedIn &&
+        <button onClick={loginPage}>login
+        </button>
+        }
+
+        {showLogin && !loggedIn &&
+        <Login setLoggedIn={setLoggedIn}/>
+        }
+      
+        {loggedIn &&
+        <>
+        <button onClick={browseMine}>view my trips</button>
         <button onClick={create}>create a trip</button>
-        <button onClick={signOut}>sign out</button>
-      </div> }
-        {browseTrip && loggedIn && 
+        <button onClick={signOut}>sign out</button></>}    
+      
+        {browseTrip && 
           <BrowseAll setShowSelectedTrip={setShowSelectedTrip}/>}
 
-        {browseMyTrips && loggedIn && 
+        {browseMyTrips &&
           <BrowseAll mine={true} setShowSelectedTrip={setShowSelectedTrip}/>}       
 
-        {displaySelected && loggedIn &&
+        {displaySelected && 
           <ShowTrip showSelectedTrip={showSelectedTrip} setBrowseTrip={setBrowseTrip} setShowSelectedTrip={setShowSelectedTrip} />
           }    
-      
+
         {createTrip && loggedIn &&
         <BrowseMyExisting setShowSelectedTrip={setShowSelectedTrip} setCreateTrip={setCreateTrip}/>}
       

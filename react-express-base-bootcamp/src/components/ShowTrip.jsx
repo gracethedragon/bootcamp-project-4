@@ -6,6 +6,12 @@ import { useCookies } from 'react-cookie';
 
 export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelectedTrip, setCreateTrip}){   
     const [deleteTrip, setDeleteTrip] = useState(false)
+    const [cookies, setCookie, removeCookie] = useCookies();
+    const [userIsAuthor, setUserIsAuthor] = useState(false)
+
+    let loggedInUserId = Number(document.cookie.replace(/(?:(?:^|.*;\s*)userId\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
+
+    console.log(loggedInUserId, 'cookie')
   
     // delete entire trip
     const remove=(tripId)=>{
@@ -38,6 +44,10 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
       .then((response)=>{
       console.log('response', response.data)
       const responseTrips = response.data
+
+      if(response.data.tripName?.userId === loggedInUserId){
+        setUserIsAuthor(true)
+      } 
       setShowTrip(responseTrips)
       console.log(deleteDay, 'delete')
       })
@@ -72,16 +82,23 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
     }
 
     {showTrip && 
-    <><h2>{showTrip.tripName.name}, {showTrip.tripName.country}, {showTrip.tripName.length} days</h2><button onClick={() => remove(showTrip.tripName.id)}>Delete entire trip</button>
-    <button>Reorder days</button></>}
+    <><h2>{showTrip.tripName.name}, {showTrip.tripName.country}, {showTrip.tripName.length} days</h2>
+
+      {userIsAuthor &&
+      <><button onClick={() => remove(showTrip.tripName.id)}>Delete entire trip</button><button>Reorder days</button></>
+      }
+    </>}
 
     {showTrip &&      
       showTrip.tripDays.map((day, index)=>{
       return(
       <div key={"day" + index + 1}>
         Day {index + 1}
-        <button onClick={()=>edit(day.tripId, day.id)}>Edit</button>
-        <button onClick={()=>removeDay(day.tripId, day.id, )}>Delete</button>
+
+        {userIsAuthor &&
+        <><button onClick={() => edit(day.tripId, day.id)}>Edit</button><button onClick={() => removeDay(day.tripId, day.id)}>Delete</button></>
+        }
+
         {day.data.map((stops, index)=>{ 
           
           return(
