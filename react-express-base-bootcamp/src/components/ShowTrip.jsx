@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
+import EditDay from './EditDay.jsx';
+import Form from './TripForm.jsx';
 
-export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelectedTrip}){   
+export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelectedTrip, setCreateTrip}){   
     const [deleteTrip, setDeleteTrip] = useState(false)
   
     // delete entire trip
@@ -41,8 +43,33 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
     },[showSelectedTrip, deleteDay])
     console.log(showTrip, 'trips')
 
+    let dayData
+    //edit form
+    const [editDay, setEditDay]= useState()
+
+    const edit = (tripId, dayId)=>{
+      console.log('edit')
+      axios
+      .get(`/trips/${tripId}/${dayId}`)
+      .then((response) => {
+        setEditDay(response.data)
+        console.log(dayData, 'day data')
+        setShowTrip(false)
+        console.log('set as true')
+      })
+    }
+    
   return(
     <div>
+
+     {editDay && 
+     <div>
+      <h2>hello</h2>
+      <EditDay dayData={editDay} />
+      {/* <Form itineraryTitle={'hello'} dayData={editDay} setCreateTrip={setCreateTrip}/> */}
+      </div>
+    }
+
     {showTrip && 
     <><h2>{showTrip.tripName.name}, {showTrip.tripName.country}, {showTrip.tripName.length} days</h2><button onClick={() => remove(showTrip.tripName.id)}>Delete entire trip</button>
     <button>Reorder days</button></>}
@@ -52,7 +79,7 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
       return(
       <div key={"day" + index + 1}>
         Day {index + 1}
-        <button>Edit</button>
+        <button onClick={()=>edit(day.tripId, day.id)}>Edit</button>
         <button onClick={()=>removeDay(day.tripId, day.id, )}>Delete</button>
         {day.data.map((stops, index)=>{ 
           

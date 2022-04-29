@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
 export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip}) {
-  console.log(itineraryTitle, 'itinerarytitle')
+  console.log(itineraryTitle,'itinerarytitle')
   const data = {
     location:'',
     transport:'',
@@ -10,7 +10,6 @@ export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip
     type:'',
     reference:''
   }
-
   const [formFields, setFormFields] = useState([data])
 
   const handleFieldsAdd =()=>{

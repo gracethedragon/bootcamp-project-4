@@ -11,7 +11,7 @@ export default function initTripsController (db) {
     try {
       console.log(req.body, 'tryy')
       const newTrip = await db.Trip.create({
-        userId: 2,
+        userId: 1,
         name: req.body.formData.title.title,
         length: 1,
         country: req.body.formData.title.country,  
@@ -145,6 +145,42 @@ export default function initTripsController (db) {
     }
   }
 
+  const showDay = async(req,res)=>{
+    try{
+      const tripId = req.params.tripId
+      const dayId = req.params.dayId
+      const trip = await db.Trip.findByPk(tripId)
+      const day = await db.Day.findOne({
+        where:{
+          tripId:  tripId,
+          id: dayId
+        }
+      })
+      res.send({day, trip})
+    }catch (error){
+      console.log(error)
+    }
+  }
+
+  const editDay = async(req,res)=>{
+    try{
+      const tripId = req.params.tripId
+      const dayId = req.params.dayId
+      console.log(tripId, dayId, req.body.formData.formFields)
+      const trip = await db.Trip.findByPk(tripId)
+      const day = await db.Day.update({
+        data: req.body.formData.formFields},
+        {where:{
+          tripId: tripId,
+          id: dayId
+        }
+      })
+      res.send(day)
+    }catch (error){
+      console.log(error)
+    }
+  }
+
   return {
     show,
     create,
@@ -152,6 +188,8 @@ export default function initTripsController (db) {
     showMine,
     showOne, 
     removeTrip,
-    removeDay
+    removeDay,
+    showDay,
+    editDay
   }
 }
