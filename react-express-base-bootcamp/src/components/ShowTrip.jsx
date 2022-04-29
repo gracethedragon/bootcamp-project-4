@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 import EditDay from './EditDay.jsx';
 import Form from './TripForm.jsx';
+import { useCookies } from 'react-cookie';
 
 export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelectedTrip, setCreateTrip}){   
     const [deleteTrip, setDeleteTrip] = useState(false)
@@ -65,7 +66,7 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
      {editDay && 
      <div>
       <h2>hello</h2>
-      <EditDay dayData={editDay} />
+      <EditDay dayData={editDay} setShowTrip={setShowTrip} setEditDay={setEditDay} />
       {/* <Form itineraryTitle={'hello'} dayData={editDay} setCreateTrip={setCreateTrip}/> */}
       </div>
     }

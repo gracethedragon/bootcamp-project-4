@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import Form,  {BrowseMyExisting }from './components/TripForm.jsx'
 import BrowseAll, {BrowseMine} from './components/BrowseTrips.jsx'
 import ShowTrip from './components/ShowTrip.jsx';
-import axios from 'axios'
+import Login from './components/Login.jsx';
+import { useCookies } from 'react-cookie';
 
 export default function App() {
   const [createTrip, setCreateTrip] = useState(false);  
@@ -11,6 +12,8 @@ export default function App() {
   const [browseMyTrips, setBrowseMyTrips] = useState(false);  
   const [displaySelected, setDisplaySelected] = useState(false)
   const [showSelectedTrip, setShowSelectedTrip] = useState('')
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const create = () => {
     console.log('clicked show') 
@@ -34,6 +37,12 @@ export default function App() {
     setCreateTrip(false)
     setBrowseTrip(false)
     return setBrowseMyTrips(true);
+  }
+
+  const signOut = () => {
+    removeCookie('loggedIn')
+    removeCookie('userId')
+    setLoggedIn(false)
   }
 
   useEffect(()=>{
@@ -68,20 +77,27 @@ export default function App() {
   }, [createTrip, browseTrip,browseMyTrips, showSelectedTrip])
   return (
     <div>
+      {!loggedIn &&
+        <Login setLoggedIn={setLoggedIn}/>
+      }
+      {loggedIn && 
+      <div>
         <button onClick={browseMine}>view my trips</button>
         <button onClick={browse}>browse all trips</button>
         <button onClick={create}>create a trip</button>
-        {browseTrip && 
+        <button onClick={signOut}>sign out</button>
+      </div> }
+        {browseTrip && loggedIn && 
           <BrowseAll setShowSelectedTrip={setShowSelectedTrip}/>}
 
-        {browseMyTrips && 
+        {browseMyTrips && loggedIn && 
           <BrowseAll mine={true} setShowSelectedTrip={setShowSelectedTrip}/>}       
 
-        {displaySelected &&
+        {displaySelected && loggedIn &&
           <ShowTrip showSelectedTrip={showSelectedTrip} setBrowseTrip={setBrowseTrip} setShowSelectedTrip={setShowSelectedTrip} />
           }    
       
-        {createTrip &&
+        {createTrip && loggedIn &&
         <BrowseMyExisting setShowSelectedTrip={setShowSelectedTrip} setCreateTrip={setCreateTrip}/>}
       
     </div>

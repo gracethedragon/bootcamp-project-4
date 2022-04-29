@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
+import { useCookies } from 'react-cookie';
 
 
 function show (trips, setShowSelectedTrip, showMine){
@@ -21,11 +22,12 @@ function show (trips, setShowSelectedTrip, showMine){
     )
 }
 export default function BrowseAll ({setShowSelectedTrip, mine}){
+  const [cookies, setCookie, removeCookie] = useCookies();
   console.log(mine)  
   const [trips, setTrips]= useState()
     if(mine){
       useEffect(()=>{
-        let userId = 2
+        let userId = cookies.userId
         axios
         .get(`/mytrips/${userId}`)
         .then((response)=>{

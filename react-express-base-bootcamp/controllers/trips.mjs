@@ -167,15 +167,28 @@ export default function initTripsController (db) {
       const tripId = req.params.tripId
       const dayId = req.params.dayId
       console.log(tripId, dayId, req.body.formData.formFields)
-      const trip = await db.Trip.findByPk(tripId)
-      const day = await db.Day.update({
+      const tripName = await db.Trip.findOne({
+        where:{
+          id: tripId
+        }
+      })
+
+      await db.Day.update({
         data: req.body.formData.formFields},
         {where:{
           tripId: tripId,
           id: dayId
         }
       })
-      res.send(day)
+
+      const tripDays = await db.Day.findAll({
+        where:{
+          tripId: tripId
+        }
+      })
+
+      res.send({tripDays, tripName})
+      
     }catch (error){
       console.log(error)
     }

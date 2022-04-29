@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
-export default function EditDay({dayData, setCreateTrip}) {
+export default function EditDay({dayData, setCreateTrip, setShowTrip, setEditDay}) {
   console.log(dayData, 'itinerarytitle')
   const data = {
     location:'',
@@ -44,6 +44,7 @@ export default function EditDay({dayData, setCreateTrip}) {
     console.log("InputFields", formFields, title)
     // setCreateTrip(false)
     
+    
     // add in trip id and day id
     
     axios.put(`/trips/${tripId}/${dayId}`, {
@@ -52,8 +53,10 @@ export default function EditDay({dayData, setCreateTrip}) {
         formFields
       }
     }).then((response)=>{
-      console.log(response)
+      console.log(response, 'response')
       // setShowSelectedTrip(tripId)
+      setEditDay()
+      setShowTrip(response.data)
     })
 
   };
@@ -88,7 +91,7 @@ export default function EditDay({dayData, setCreateTrip}) {
             <div className="type">
               <label>Type</label>
               <select name='type' onChange={(event)=>handleInputChange(event, index)}
-                value={field.type}>
+                defaultValue={field.type ? field.type : 'DEFAULT'}>
                 <option value="DEFAULT" disabled>---Choose one---</option>
                 <option value="accommodation">accommodation</option>
                 <option value="food">f000d</option>
