@@ -44,9 +44,6 @@ module.exports = {
       length: {
         type: Sequelize.INTEGER,
       },
-      country: {
-        type: Sequelize.STRING,
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -57,6 +54,27 @@ module.exports = {
       },
 
     });
+
+    await queryInterface.createTable('countries', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      name: {
+        type: Sequelize.STRING,
+      },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
+
     await queryInterface.createTable('days', {
       id: {
         allowNull: false,
@@ -68,6 +86,13 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: {
           model: 'trips',
+          key: 'id',
+        },
+      },
+      country_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'countries',
           key: 'id',
         },
       },
@@ -83,7 +108,8 @@ module.exports = {
         type: Sequelize.DATE,
       },
     });
-    await queryInterface.createTable('trip_days', {
+
+    await queryInterface.createTable('trip_countries', {
       trip_id: {
         type: Sequelize.INTEGER,
         references: {
@@ -91,10 +117,10 @@ module.exports = {
           key: 'id',
         },
       },
-      day_id: {
+      country_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'days',
+          model: 'countries',
           key: 'id',
         },
       },
@@ -111,8 +137,9 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('trip_days');
+    await queryInterface.dropTable('trip_countries');    
     await queryInterface.dropTable('days');
+    await queryInterface.dropTable('countries');
     await queryInterface.dropTable('trips');
     await queryInterface.dropTable('users');
   },

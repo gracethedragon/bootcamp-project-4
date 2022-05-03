@@ -15,6 +15,13 @@ export default function initDayModel(sequelize, DataTypes) {
           key: 'id',
         },
       },
+      countryId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'countries',
+          key: 'id',
+        },
+      },
        data: {
         type: DataTypes.JSON,
       },

@@ -26,6 +26,8 @@ export default function routes(app) {
   app.get('/trips/:tripId/:dayId', TripsController.showDay);
   app.put('/trips/:tripId/:dayId', TripsController.editDay);
   app.delete('/trips/:tripId/:dayId', TripsController.removeDay);
+
+  // app.get('/countries',
   
   
   

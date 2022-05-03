@@ -21,9 +21,6 @@ export default function initTripModel(sequelize, DataTypes) {
       length: {
         type: DataTypes.STRING
       },
-      country: {
-        type: DataTypes.STRING
-      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

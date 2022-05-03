@@ -5,6 +5,7 @@ import allConfig from '../config/config.js';
 import initUserModel from './user.mjs';
 import initTripModel from './trip.mjs';
 import initDayModel from './day.mjs';
+import initCountryModel from './country.mjs'
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -40,13 +41,20 @@ db.Sequelize = Sequelize;
 db.User = initUserModel(sequelize, Sequelize.DataTypes);
 db.Day = initDayModel(sequelize, Sequelize.DataTypes);
 db.Trip = initTripModel(sequelize, Sequelize.DataTypes);
+db.Country = initCountryModel(sequelize, Sequelize.DataTypes)
 
 // many to many table
-db.Day.belongsToMany(db.Trip, { through: 'trip_days' });
-db.Trip.belongsToMany(db.Day, { through: 'trip_days' });
+db.Country.belongsToMany(db.Trip, { through: 'trip_countries', onDelete: 'cascade', hooks:true});
+db.Trip.belongsToMany(db.Country, { through: 'trip_countries', onDelete: 'cascade', hooks:true});
 
 // one to many table
 db.Trip.belongsTo(db.User);
 db.User.hasMany(db.Trip);
 
+db.Day.belongsTo(db.Trip)
+db.Trip.hasMany(db.Day)
+
+// one to one table
+db.Day.belongsTo(db.Country)
+db.Country.hasOne(db.Day)
 export default db;

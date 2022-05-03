@@ -5,16 +5,19 @@ import { useCookies } from 'react-cookie';
 
 function show (trips, setShowSelectedTrip, showMine){
   console.log( showMine, 'mine')
+  console.log(trips,'trips')
   return ( 
-    <div>  
-      {showMine ? <h2>my trips</h2> : <h2>list of all trips</h2>}
+    <div className="row">  
+      {showMine ? <h2>MY TRIPS</h2> : <h2>ALL TRIPS</h2>}
            
       {trips && 
         trips.map((trip)=>{
           const {id, name, country, length, createdAt, updatedAt} = trip
           return (
-            <div key={id} onClick={()=>setShowSelectedTrip(id)}>
-              <h5>{name}, {country}, {length} days, {createdAt}</h5>
+            <div className="row" key={id} onClick={()=>setShowSelectedTrip(id)}>
+              {length <= 1 ?
+              <h5>{name}, {length} day</h5> :
+              <h5>{name}, {length} days</h5>}
             </div>
           )
         })}
@@ -51,23 +54,6 @@ export default function BrowseAll ({setShowSelectedTrip, mine}){
       return show(trips, setShowSelectedTrip)
     }
     
-    
-    
-//     return (
-    
-//     <div>
-//       <h2>list of trips</h2>
-//       {trips && 
-//         trips.map((trip)=>{
-//           const {id, name, country, length, createdAt, updatedAt} = trip
-//           return (
-//             <div key={id} onClick={()=>setShowSelectedTrip(id)}>
-//               <h5>{name}, {country}, {length} days, {createdAt}</h5>
-//             </div>
-//           )
-//         })}
-//     </div>
-//     )
  }
 
 export function BrowseMine ({setShowSelectedTrip}){

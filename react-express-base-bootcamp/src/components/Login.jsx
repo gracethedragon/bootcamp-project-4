@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
 
+
+
 function Create({setHasAccount}){
   const [userFields, setUserFields] = useState({email:'', password:''})
   const [createError, setCreateError] = useState(false)
@@ -11,7 +13,8 @@ function Create({setHasAccount}){
       [event.target.name]: event.target.value})
     console.log(userFields)
   }
-  const createUser = () =>{
+  const createUser = (e) =>{
+    e.preventDefault()
     axios
     .post('/user/create', {userFields})
     .then((response)=> {
@@ -24,17 +27,38 @@ function Create({setHasAccount}){
     })
   }
   return (
-    <div>
-      <h2>Create an account</h2>
-      {createError && 
-      <h3>email already registered, please try again</h3>}
-      <label>Email</label>
-      <input type="text" name="email" onChange={(event)=>handleInputChange(event)}/> <br/>
-      <label>Password</label>
-      <input type="password" name="password" onChange={(event)=>handleInputChange(event)}/> <br/>
-      <button onClick={createUser}>Create!</button>
-      <button onClick={()=>setHasAccount(true)}> I have an account</button>
+      
+      <div >
+        <form onSubmit={(e)=>createUser(e)}>
+        <h2>SIGN UP</h2>
+        
+        {createError && 
+          
+          <h6>email already registered, please try again</h6>
+        }
+      <div className="row justify-content-center mb-3">
+      <div className="col-12 mb-3">
+        <label>Email</label><br />
+        <input type="text" name="email" onChange={(event)=>handleInputChange(event)} required/> <br />
+      </div>
+      <div className="col-12 mb-3">
+        <label>Password</label><br/>
+        <input type="password" name="password" onChange={(event)=>handleInputChange(event)} required/> <br/>
+      </div>
+      </div>
+      <div className="row justify-content-center">
+      <div className="col">
+         <input className="button"type="button" onClick={()=>setHasAccount(true)} value="Sign In"/>
+      </div>
+      <div className="col">
+        <input className="button" type="submit" value="Create" />
+        <br/>
+      </div>
     </div>
+    </form>
+  </div>
+  
+    
   )
 }
 
@@ -49,7 +73,8 @@ export default function Login ({setLoggedIn}){
       [event.target.name]: event.target.value.toLowerCase()})
     console.log(userFields)
   }
-  const checkUser = () =>{
+  const checkUser = (e) =>{
+    e.preventDefault()
     console.log(userFields, 'checking')
     axios
     .post('/user/login', {userFields})
@@ -65,21 +90,36 @@ export default function Login ({setLoggedIn}){
     })
   }
   return (
-    <div>
+    <div className="secondContainer row">
     {!hasAccount && <Create setHasAccount={setHasAccount}/>}
 
     {hasAccount && 
     <div>
-      <h2>Login</h2>
+      <form onSubmit={(e)=> checkUser(e)}>
+      <h2>LOGIN</h2>
       {loginError &&
-      <h3>wrong email/password, please check and try again</h3>
+      <h6>wrong email/password, please check and try again</h6>
       }
-      <label >Email</label>
-      <input type="text" name="email" placeholder={typeof(hasAccount) !== "boolean"? hasAccount : null} onChange={(event)=>handleInputChange(event)}/> <br/>
-      <label>Password</label>
-      <input type="password" name="password" onChange={(event)=>handleInputChange(event)}/> <br/>
-      <button onClick={()=>setHasAccount(false)}>Create an account</button>
-      <button onClick={checkUser}> Submit</button>
+      <div className="row justify-content-center mb-3">
+      <div className="col-12 mb-3">
+       <label>Email</label><br/>
+        <input type="text" name="email" placeholder={typeof(hasAccount) !== "boolean"? hasAccount : null} onChange={(event)=>handleInputChange(event)} required/> <br/>
+      </div>
+      <div className="col-12 mb-3">
+        <label>Password</label><br/>
+        <input type="password" name="password" onChange={(event)=>handleInputChange(event)} required/> <br/>
+      </div>
+      </div>
+
+      <div className="row justify-content-center">
+        <div className="col">
+        <input className="button" type="button" onClick={()=>setHasAccount(false)} value="Create"/>
+        </div>
+        <div className="col">
+        <input className="button" type="submit" value="Submit"/>
+      </div>
+      </div>
+      </form>
     </div>
     }
     </div>

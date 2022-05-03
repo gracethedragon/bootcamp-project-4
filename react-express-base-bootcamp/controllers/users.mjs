@@ -10,7 +10,7 @@ export default function initUsersController (db) {
       }
     })
 
-    if (emailCheck.length === 0) {
+    if (emailCheck === null) {
       const user = await db.User.create({
         email: req.body.userFields.email,
         password: req.body.userFields.password

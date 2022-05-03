@@ -4,6 +4,8 @@ import EditDay from './EditDay.jsx';
 import Form from './TripForm.jsx';
 import { useCookies } from 'react-cookie';
 
+
+
 export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelectedTrip, setCreateTrip}){   
     const [deleteTrip, setDeleteTrip] = useState(false)
     const [cookies, setCookie, removeCookie] = useCookies();
@@ -15,7 +17,7 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
   
     // delete entire trip
     const remove=(tripId)=>{
-      setDeleteTrip(true)
+      setDeleteTrip(!deleteTrip)
       setShowTrip(false)
       console.log(tripId)
       axios
@@ -42,9 +44,11 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
       axios
       .get(`/trips/${showSelectedTrip}`)
       .then((response)=>{
+      
       console.log('response', response.data)
       const responseTrips = response.data
-
+      responseTrips.tripDays?.sort((a,b)=>a.id - b.id)
+      
       if(response.data.tripName?.userId === loggedInUserId){
         setUserIsAuthor(true)
       } 
@@ -71,47 +75,75 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
     }
     
   return(
-    <div>
+    <div class="row d-flex justify-content-around">
 
      {editDay && 
      <div>
-      <h2>hello</h2>
       <EditDay dayData={editDay} setShowTrip={setShowTrip} setEditDay={setEditDay} />
-      {/* <Form itineraryTitle={'hello'} dayData={editDay} setCreateTrip={setCreateTrip}/> */}
       </div>
     }
 
     {showTrip && 
-    <><h2>{showTrip.tripName.name}, {showTrip.tripName.country}, {showTrip.tripName.length} days</h2>
-
+    <>
+    {showTrip.tripName.length <= 1 ?
+    <>
+    <h2>{showTrip.tripName.name} </h2>
+    <h4>{showTrip.tripName.length} day trip</h4>
+    <h6> Updated {showTrip.tripName.updatedAt.split("T")[0]}</h6></> :
+    <>
+    <h2>{showTrip.tripName.name}</h2>
+    <h4>{showTrip.tripName.length} days trip</h4>
+    <h6>{showTrip.tripName.updatedAt.split("T")[0]}</h6></>}
+      
       {userIsAuthor &&
-      <><button onClick={() => remove(showTrip.tripName.id)}>Delete entire trip</button><button>Reorder days</button></>
+      <>
+      <div class="col">
+      <button className="button">Reorder days</button>
+      </div>
+      <div class="col">
+        <button class="button" onClick={() => remove(showTrip.tripName.id)}><i class="fa fa-trash"> entire trip</i></button>
+      </div>
+      
+      </>
       }
     </>}
-
+      
     {showTrip &&      
       showTrip.tripDays.map((day, index)=>{
       return(
-      <div key={"day" + index + 1}>
-        Day {index + 1}
+      <div class="row" class="day" key={"day" + index + 1}>
+        
+        <div>
+        <h4>Day {index + 1}, {day.country.name}</h4>
+        
 
         {userIsAuthor &&
-        <><button onClick={() => edit(day.tripId, day.id)}>Edit</button><button onClick={() => removeDay(day.tripId, day.id)}>Delete</button></>
+        <>
+        
+          <button class="btn" onClick={() => edit(day.tripId, day.id)}><i class="fa fa-edit"></i></button>
+       
+          <button class="btn" onClick={() => removeDay(day.tripId, day.id)}><i class="fa fa-trash"></i></button>
+        
+        </>
         }
-
+        </div>
+        <div>
+        
         {day.data.map((stops, index)=>{ 
-          
           return(
-          <ul key={"day" + index + 1}>            
+          <div class="row dayEvents" key={"day" + index + 1}>            
             {stops.transport !== '' && <h6 >{stops.transport}, {stops.time} minutes</h6>}
-            <li >{stops.location} ({stops.type})</li>
-            <h6 >{stops.reference}</h6>
-          </ul>
+            <h5 >{stops.location} ({stops.type})</h5>
+            <h6 >{stops.reference}</h6>    
+          </div>
           )
         })}
+        <hr></hr>
+        </div>
       </div>)
     })
     }
+    
     
     </div>
   )

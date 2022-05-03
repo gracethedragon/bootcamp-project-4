@@ -5,6 +5,7 @@ import ShowTrip from './components/ShowTrip.jsx';
 import Login from './components/Login.jsx';
 import { useCookies } from 'react-cookie';
 
+
 export default function App() {
   const [createTrip, setCreateTrip] = useState(false);  
   // const [myTrip, setMytrip] = useState(false)
@@ -51,6 +52,7 @@ export default function App() {
   const signOut = () => {
     removeCookie('loggedIn')
     removeCookie('userId')
+    setShowSelectedTrip('')
     return setLoggedIn(false)
   }
 
@@ -66,15 +68,19 @@ export default function App() {
     } else if (showSelectedTrip === '') {
       setDisplaySelected(false)
     }
+
+    if(!loggedIn){
+      removeCookie('loggedIn')
+      removeCookie('userId')
+    }
     
   }, [createTrip, browseTrip, browseMyTrips, showSelectedTrip, showLogin])
   return (
-    <div>
-        <button onClick={browse}>browse all trips</button>
+    <div id="container">
+        <input className="button mx-2" type="button"  onClick={browse} value="Browse"/>
 
         {!loggedIn &&
-        <button onClick={loginPage}>login
-        </button>
+        <input className="button mx-2" type="button"  onClick={loginPage} value="Login"/>
         }
 
         {showLogin && !loggedIn &&
@@ -83,9 +89,9 @@ export default function App() {
       
         {loggedIn &&
         <>
-        <button onClick={browseMine}>view my trips</button>
-        <button onClick={create}>create a trip</button>
-        <button onClick={signOut}>sign out</button></>}    
+        <input className="button mx-2" type="button" onClick={browseMine} value="My Trips"/>
+        <input className="button mx-2" type="button" onClick={create} value="Create"/>
+        <input className="button mx-2" type="button" onClick={signOut} value="Seeya"/></>}    
       
         {browseTrip && 
           <BrowseAll setShowSelectedTrip={setShowSelectedTrip}/>}

@@ -10,19 +10,26 @@ export default function initTripsController (db) {
   const create = async (req, res) =>{
     try {
       console.log(req.body, 'tryy')
+      const country = await db.Country.findOne({
+        where: {
+          name:req.body.formData.country.country
+        }
+      })
+
+      console.log(country)
       const newTrip = await db.Trip.create({
         userId: req.body.formData.userId,
         name: req.body.formData.title.title,
         length: 1,
-        country: req.body.formData.title.country,  
       })
       console.log(newTrip.id, 'trip')
 
       const newDay = await db.Day.create({
         tripId: newTrip.id,
+        countryId: country.id,
         data: req.body.formData.formFields
       })
-      await newTrip.addDay(newDay)
+      await newTrip.addCountry(country)
       
       res.send(newDay)
     } catch (error) {
@@ -41,14 +48,23 @@ export default function initTripsController (db) {
       })
 
       await trip.increment('length')
+      console.log(req.body.formData.country.country)
+
+      const country = await db.Country.findOne({
+        where: {
+          name: req.body.formData.country.country
+        }
+      })
+      console.log(country.id)
 
       const newDay = await db.Day.create({
         tripId: req.body.formData.title.id,
-        data: req.body.formData.formFields
+        data: req.body.formData.formFields,
+        countryId: country.id
       })
 
 
-      await trip.addDay(newDay) 
+      await trip.addCountry(country) 
       res.send(newDay)
     } catch (error) {
     console.log(error)
@@ -71,7 +87,7 @@ export default function initTripsController (db) {
 
   const showOne = async (req,res)=>{
     try{
-      console.log(req.params.id, 'tripId')
+      console.log(req.params.id, 'tripId, showOne')
       const tripName = await db.Trip.findOne({
         where:{
           id: req.params.id
@@ -80,6 +96,9 @@ export default function initTripsController (db) {
       const tripDays = await db.Day.findAll({
         where:{
           tripId: req.params.id
+        },
+        include: {
+          model: db.Country
         }
       })
 
@@ -99,19 +118,26 @@ export default function initTripsController (db) {
           tripId: tripId
         }
       })
-      await trip.removeDays(days)
+      await days.forEach(day=> {
+        console.log(day.countryId, 'countryId')
+        trip.removeCountry(day.countryId)})
 
       await db.Day.destroy({
         where:{
           tripId: tripId
         }
       })
+
       
+
       await db.Trip.destroy({
         where:{
           id: tripId
         }
       })
+
+      
+
       res.send('destroyed') 
     } catch  (error){
       console.log(error)
@@ -124,20 +150,34 @@ export default function initTripsController (db) {
       const dayId = req.params.dayId
 
       const trip = await db.Trip.findByPk(tripId)
+
       const day = await db.Day.findOne({
         where: {
           id: dayId
         }
       })
-      await trip.removeDay(day)
 
       await db.Day.destroy({
         where:{
           id: dayId
         }
       })
-
       await trip.decrement('length')
+
+      //deleted day country
+      const otherDays = await db.Day.findAll({
+        where:{
+          countryId: day.countryId,
+          tripId: tripId
+        }
+      })
+
+      console.log(otherDays.length)
+      // if only this day in the trip has this country, remove it from the many-to-many table
+      if(otherDays.length === 0) {
+        await trip.removeCountry(day.countryId)
+      } 
+
       res.send('destroyed') 
     } 
     catch (error) {
@@ -154,6 +194,9 @@ export default function initTripsController (db) {
         where:{
           tripId:  tripId,
           id: dayId
+        },
+         include: {
+          model: db.Country
         }
       })
       res.send({day, trip})
@@ -166,26 +209,57 @@ export default function initTripsController (db) {
     try{
       const tripId = req.params.tripId
       const dayId = req.params.dayId
-      console.log(tripId, dayId, req.body.formData.formFields)
-      const tripName = await db.Trip.findOne({
+      console.log(tripId, dayId, req.body.formData)
+      const tripName = await db.Trip.findByPk(tripId)
+
+      const country = await db.Country.findOne({
         where:{
-          id: tripId
+          name: req.body.formData.country
+        }
+      })
+      
+      //original day details
+      const day = await db.Day.findByPk(dayId)
+
+      //updated day country
+      const otherDays = await db.Day.findAll({
+        where:{
+          countryId: day.countryId,
+          tripId: tripId
         }
       })
 
+      console.log(otherDays.length)
+      // if only this day in the trip has this country, remove it from the many-to-many table
+      if(otherDays.length === 1) {
+        await trip.removeCountry(day.countryId)
+      } 
+      
+      //update day details
       await db.Day.update({
-        data: req.body.formData.formFields},
-        {where:{
+        data: req.body.formData.formFields,
+        countryId: country.id
+      },{
+        where:{
           tripId: tripId,
           id: dayId
         }
       })
 
+      //update many-to-many table with newcountry pairing
+      await tripName.addCountry(country.id)
+
+      
+
       const tripDays = await db.Day.findAll({
         where:{
           tripId: tripId
+        },
+        include:{
+          model: db.Country
         }
       })
+
 
       res.send({tripDays, tripName})
       

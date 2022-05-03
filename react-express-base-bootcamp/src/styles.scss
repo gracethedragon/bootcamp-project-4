@@ -1,3 +1,81 @@
+@import "~bootstrap/scss/bootstrap";
+
 body {
-  background-color: pink;
+  margin: 5% 5%;
+  font-family: "Dosis", sans-serif;
+  font-weight: 400;
+}
+
+img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+
+  /* Preserve aspet ratio */
+  min-width: 80%;
+  min-height: 100%;
+}
+
+.secondContainer {
+  margin: 0 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.row {
+  text-align: center;
+}
+
+//page titles
+h2 {
+  font-weight: bold;
+  padding-top: 5px;
+  font-size: 50px;
+  color: white;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: black;
+}
+
+//location names in day
+h5 {
+}
+
+//transport details in day
+h6 {
+  font-weight: 200;
+}
+
+.btn {
+  border: none;
+  color: grey;
+  padding: 5px 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}
+
+.button {
+  color: white;
+  border: none;
+  background-color: lightseagreen;
+}
+.button:hover {
+  color: lightseagreen;
+  background-color: white;
+}
+
+.day {
+}
+.dayEvents {
+  color: darkblue;
+}
+
+.submitButton {
+  font-family: FontAwesome;
 }
