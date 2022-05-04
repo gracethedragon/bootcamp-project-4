@@ -21,6 +21,7 @@ export default function routes(app) {
   app.get('/mytrips/:userId', TripsController.showMine);
 
   app.get('/trips/:id', TripsController.showOne)
+  app.put('/trips/:tripId', TripsController.updateDayOrder)
   app.delete('/trips/:tripId', TripsController.removeTrip);
   
   app.get('/trips/:tripId/:dayId', TripsController.showDay);

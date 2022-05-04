@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
+// import { GoogleMap, useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+import Autocomplete from "react-google-autocomplete";
+
+
 
 
 let countryList = ['Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan','Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi','Côte dIvoire','Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo (Congo-Brazzaville)','Costa Rica','Croatia','Cuba','Cyprus','Czechia (Czech Republic)','Democratic Republic of the Congo','Denmark','Djibouti','Dominica','Dominican Republic','Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini (fmr. "Swaziland")','Ethiopia','Fiji','Finland','France','Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana','Haiti','Holy See','Honduras','Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kiribati','Kuwait','Kyrgyzstan','Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar (formerly Burma)','Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway','Oman','Pakistan','Palau','Palestine State','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda','Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu','Uganda','Ukraine','United Arab Emirates','United Kingdom','United States of America','Uruguay','Uzbekistan','Vanuatu','Venezuela','Vietnam','Yemen','Zambia']
 
 export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip}) {
-
+  // const { isLoaded } = useJsApiLoader({
+  //   googleMapsApiKey: "AIzaSyA5hmlh5wvDhbic2H_AyaH0CbHpnm2xBhU",
+  //   libraries: 'places',
+  // })
+  const locationArray = []
   const [country, setDayCountry] = useState('')
   let userId = Number(document.cookie.replace(/(?:(?:^|.*;\s*)userId\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
   console.log(itineraryTitle,'itinerarytitle')
@@ -39,7 +47,21 @@ export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip
     console.log(formFields)
   }
 
-  const handleInputChange = (event, index) => {
+  const handleInputChangeTest = (event, value) => {
+    console.log(event.target.value,'event')
+    console.log(value,'value')
+    // const newFormFields = formFields.map(field => {
+    //   if(index === formFields.indexOf(field)) {
+    //     field[event.target.name] = event.target.value
+    //   }
+    //   return field;
+    // })
+    // setFormFields(newFormFields);
+  }
+
+  const handleInputChange = (event, index, value) => {
+    console.log(event.target.value,'event')
+    console.log(value,'value')
     const newFormFields = formFields.map(field => {
       if(index === formFields.indexOf(field)) {
         field[event.target.name] = event.target.value
@@ -113,7 +135,18 @@ export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip
             {index !== 0 &&
             <><div className="transport mb-3">
                <label><i className="fa fa-arrows">&nbsp;</i></label>
-               <input name='transport' value={field.transport} onChange={(event) => handleInputChange(event, index)} placeholder ="I came here by ..." required />
+               {/* <input name='transport' value={field.transport} onChange={(event) => handleInputChange(event, index)} placeholder ="I came here by ..." required /> */}
+               <select name='transport' onChange={(event)=>handleInputChange(event, index)}
+                defaultValue={''} required>
+                <option value="" disabled>---Came here by---</option>
+                <option value="walking">walking</option>
+                <option value="taxi">taxi</option>
+                <option value="driving">driving</option>
+                <option value="bus">bus</option>
+                <option value="train">train</option>
+                <option value="boat">boat</option>
+                <option value="plane">plane</option>
+            </select>
              </div>
              
              <div className="mb-3">
@@ -123,7 +156,10 @@ export default function Form({itineraryTitle, setShowSelectedTrip, setCreateTrip
             }
             <div className="location mb-3">
               <label><i className="fa fa-map-marker">&nbsp;</i></label>
-              <input type="text" name='Location' value={field.location} onChange={(event)=>handleInputChange(event, index)} placeholder="Location" required/>
+              <input type="text" name='location' 
+              value={field.location} 
+              onChange={(event)=>handleInputChange(event, index)} placeholder="Location" required/>
+              
             </div>
 
             <div className="type mb-3">
@@ -222,6 +258,7 @@ export function BrowseMyExisting ({setShowSelectedTrip, setCreateTrip}){
     return (
     <div className="row">
       <h2>Existing Trips</h2>
+      <button onClick={()=>calcRoute()}> test api</button>
     
       <form onSubmit={(e)=>submit(e)}>
       <div className="mb-3">
@@ -253,4 +290,37 @@ export function BrowseMyExisting ({setShowSelectedTrip, setCreateTrip}){
       }
     </div>
     )
+}
+
+let directionsService = new google.maps.DirectionsService();
+
+//define calcRoute function
+function calcRoute() {
+    console.log(document.getElementsByClassName('locationInput'), 'input')
+    const locations = Array.from(document.getElementsByClassName('locationInput'))
+
+    console.log('locations', locations)
+    //create request
+    const request = {
+        origin: 'los angeles',
+        destination: 'new york city',
+        travelMode: google.maps.TravelMode.DRIVING, //WALKING, BYCYCLING, TRANSIT
+        unitSystem: google.maps.UnitSystem.METRIC
+    }
+
+    //pass the request to the route method
+    directionsService.route(request, function (result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            console.log(result,'routes')
+            console.log(result.routes[0].legs[0].distance.text, 'distance')
+            console.log(result.routes[0].legs[0].duration.text, 'duration')
+            //Get distance and time
+            //display route
+            // directionsDisplay.setDirections(result);
+        } else {
+            console.log('error')
+            ;
+        }
+    });
+
 }

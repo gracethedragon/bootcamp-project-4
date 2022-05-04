@@ -100,7 +100,18 @@ export default function EditDay({dayData, setCreateTrip, setShowTrip, setEditDay
             {index !== 0 &&
             <><div className="transport">
                <label>Transport</label>
-               <input name='transport' value={field.transport} onChange={(event) => handleInputChange(event, index)} required />
+               {/* <input name='transport' value={field.transport} onChange={(event) => handleInputChange(event, index)} required /> */}
+               <select name='transport' onChange={(event)=>handleInputChange(event, index)}
+                defaultValue={''} required>
+                <option value="" disabled>---Came here by---</option>
+                <option value="walking">walking</option>
+                <option value="taxi">taxi</option>
+                <option value="driving">driving</option>
+                <option value="bus">bus</option>
+                <option value="train">train</option>
+                <option value="boat">boat</option>
+                <option value="plane">plane</option>
+                </select>
              </div><div className="time">
                  <label>Travel Time (minutes)</label>
                  <input type="number" name='time' value={field.time} onChange={(event) => handleInputChange(event, index)} required/>

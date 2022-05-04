@@ -50,6 +50,7 @@ module.exports = {
             Type: "food"
             }
         ]),
+        order: 1,
         created_at: new Date(),
         updated_at: new Date(),
       }]

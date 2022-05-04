@@ -27,7 +27,8 @@ export default function initTripsController (db) {
       const newDay = await db.Day.create({
         tripId: newTrip.id,
         countryId: country.id,
-        data: req.body.formData.formFields
+        data: req.body.formData.formFields,
+        order: 1
       })
       await newTrip.addCountry(country)
       
@@ -46,8 +47,10 @@ export default function initTripsController (db) {
           id: req.body.formData.title.id
         }
       })
+      const length = await trip.increment('length')
 
-      await trip.increment('length')
+      const newDayOrder = length.dataValues.length
+
       console.log(req.body.formData.country.country)
 
       const country = await db.Country.findOne({
@@ -60,9 +63,9 @@ export default function initTripsController (db) {
       const newDay = await db.Day.create({
         tripId: req.body.formData.title.id,
         data: req.body.formData.formFields,
-        countryId: country.id
+        countryId: country.id,
+        order: newDayOrder
       })
-
 
       await trip.addCountry(country) 
       res.send(newDay)
@@ -232,7 +235,7 @@ export default function initTripsController (db) {
       console.log(otherDays.length)
       // if only this day in the trip has this country, remove it from the many-to-many table
       if(otherDays.length === 1) {
-        await trip.removeCountry(day.countryId)
+        await tripName.removeCountry(day.countryId)
       } 
       
       //update day details
@@ -268,6 +271,25 @@ export default function initTripsController (db) {
     }
   }
 
+  const updateDayOrder = async(req,res)=>{
+    try{
+      
+      const dayOrder = req.body.dayOrder
+      console.log(dayOrder)
+      for (let i = 0; i < dayOrder.length; i +=1 ){
+        await db.Day.update({
+        order: i + 1
+        },{
+        where:{
+          id: dayOrder[i]
+        }
+        })
+      }
+    } catch (error){
+      console.log(error,'updateDayOrder')
+    }
+  }
+
   return {
     show,
     create,
@@ -277,6 +299,7 @@ export default function initTripsController (db) {
     removeTrip,
     removeDay,
     showDay,
-    editDay
+    editDay,
+    updateDayOrder
   }
 }

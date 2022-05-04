@@ -25,6 +25,9 @@ export default function initDayModel(sequelize, DataTypes) {
        data: {
         type: DataTypes.JSON,
       },
+      order: {
+        type: DataTypes.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
