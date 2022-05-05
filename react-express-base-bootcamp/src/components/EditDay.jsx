@@ -102,7 +102,8 @@ export default function EditDay({dayData, setCreateTrip, setShowTrip, setEditDay
                <label>Transport</label>
                {/* <input name='transport' value={field.transport} onChange={(event) => handleInputChange(event, index)} required /> */}
                <select name='transport' onChange={(event)=>handleInputChange(event, index)}
-                defaultValue={''} required>
+                defaultValue={field.transport ? field.transport : ''}
+                required>
                 <option value="" disabled>---Came here by---</option>
                 <option value="walking">walking</option>
                 <option value="taxi">taxi</option>
@@ -126,12 +127,14 @@ export default function EditDay({dayData, setCreateTrip, setShowTrip, setEditDay
               <label>Type</label>
               <select name='type' onChange={(event)=>handleInputChange(event, index)}
                 defaultValue={field.type ? field.type : ''} required>
-                <option value="" disabled>---Choose one---</option>
-                <option value="accommodation">accommodation</option>
-                <option value="food">f000d</option>
-                <option value="drinks">drinks</option>
-                <option value="shopping">shopping</option>
-                <option value="museums">museums/galleries</option>
+                <option value="" disabled>---Location Type---</option>
+                <option value="Accommodation">Accommodation</option>
+                <option value="Food/Drink">Food/Drink</option>
+                <option value="Indoor">Indoor(museum, gallery)</option>
+                <option value="Outdoor">Outdoor(beach, hike, park)</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Transport Interchange">Transport Interchange</option>
+                <option value="Others">Others</option>
             </select>
               {/* <input name='type' value={field.type} onChange={(event)=>handleInputChange(event, index)}/> */}
             </div>

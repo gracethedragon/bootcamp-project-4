@@ -94,6 +94,9 @@ export default function initTripsController (db) {
       const tripName = await db.Trip.findOne({
         where:{
           id: req.params.id
+        },
+        include:{
+          model: db.User
         }
       })
       const tripDays = await db.Day.findAll({
@@ -213,7 +216,13 @@ export default function initTripsController (db) {
       const tripId = req.params.tripId
       const dayId = req.params.dayId
       console.log(tripId, dayId, req.body.formData)
-      const tripName = await db.Trip.findByPk(tripId)
+      const tripName = await db.Trip.findOne({
+        where:{
+          id: tripId
+        }, include: {
+          model: db.User
+        }
+      })
 
       const country = await db.Country.findOne({
         where:{

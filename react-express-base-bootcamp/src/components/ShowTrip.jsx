@@ -49,11 +49,11 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
       const responseTrips = response.data
       responseTrips.tripDays?.sort((a,b)=>a.order - b.order)
       
-      dayOrderArr = responseTrips.tripDays?.map((day)=> day.id)
+      // dayOrderArr = responseTrips.tripDays?.map((day)=> day.id)
 
-      setDayOrder(dayOrderArr)
+      // setDayOrder(dayOrderArr)
 
-      console.log(dayOrder)
+      // console.log(dayOrder)
 
       if(response.data.tripName?.userId === loggedInUserId){
         setUserIsAuthor(true)
@@ -68,7 +68,24 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
 
     //handle reordering ofdays
     
-    const [dayOrder, setDayOrder] = useState(dayOrderArr);
+    const [reorderButton, setReorderButton] = useState('Reorder');
+    const [disableDrag, setDisableDrag] = useState(true)
+    
+
+    function activateReorder(){
+      console.log(reorderButton)
+      if (reorderButton === 'Reorder') {
+        console.log(reorderButton, 'save changes')
+        setReorderButton('Save Changes')
+        setDisableDrag(false)
+      } else if (reorderButton === 'Save Changes') {
+        console.log(reorderButton, 'reorder')
+        updateDayOrder(showTrip)
+        setReorderButton('Reorder')
+        setDisableDrag(true)
+      }
+    }
+
     function handleOnDragEnd(result) {
      
       console.log(result)
@@ -130,27 +147,30 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
     <>
     <h2>{showTrip.tripName.name} </h2>
     <h4>{showTrip.tripName.length} day trip</h4>
-    <h6> Updated {showTrip.tripName.updatedAt.split("T")[0]}</h6></> :
+    <h6>Submitted by <b>{showTrip.tripName.user.email}</b>, Updated on {showTrip.tripName.updatedAt.split("T")[0]}</h6>
+    <h6> search id: {showTrip.tripName.id}</h6></> :
     <>
     <h2>{showTrip.tripName.name}</h2>
     <h4>{showTrip.tripName.length} days trip</h4>
-    <h6>{showTrip.tripName.updatedAt.split("T")[0]}</h6></>}
+    <h6>submitted by <b>{showTrip.tripName.user.email}</b>, updated on {showTrip.tripName.updatedAt.split("T")[0]}</h6>
+    <h6> search id: {showTrip.tripName.id}</h6></>}
       
       {userIsAuthor &&
       <>
       <div className="col">
-      <button className="button">Reorder days</button>
+      <button className="button reorderButton" onClick={activateReorder}><i class="fa fa-reorder"> {reorderButton}</i>
+        {/* Reorder days */}
+        </button>
+
       </div>
       <div className="col">
-        <button className="button" onClick={() => remove(showTrip.tripName.id)}><i class="fa fa-trash"> entire trip</i></button>
+        <button className="button" onClick={() => remove(showTrip.tripName.id)}><i class="fa fa-trash"> Entire Trip</i></button>
       </div>
       
       </>
       }
     </>}
 
-    <button onClick={()=>updateDayOrder(showTrip)}>update day order</button>
-      
     {showTrip && 
     <DragDropContext onDragEnd={handleOnDragEnd}>     
     <Droppable droppableId="days">
@@ -159,15 +179,22 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
       <ul className="days"{...provided.droppableProps} ref={provided.innerRef}>
       {showTrip.tripDays.map((day, index)=>{
         return(
-          <Draggable key={index} draggableId={index.toString()} index={index}>
+          <Draggable key={index} draggableId={index.toString()} index={index} isDragDisabled={disableDrag}>
             {(provided) => (
-              <li ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+              <div className = "draggabledays"ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                 <div className="row day" key={"day" + index + 1}>
                   <h4>Day {index + 1}, {day.country.name}</h4>
         
                   {userIsAuthor &&
-                  <><button className="btn" onClick={() => edit(day.tripId, day.id)}><i class="fa fa-edit"></i></button>
-                  <button className="btn" onClick={() => removeDay(day.tripId, day.id)}><i class="fa fa-trash"></i></button></>
+                  <div className="row justify-content-center">
+                  <>
+                    <div className="col-1">
+                      <button className="btn" onClick={() => edit(day.tripId, day.id)}><i class="fa fa-edit"></i></button>
+                    </div>
+                    <div className="col-1">
+                      <button className="btn" onClick={() => removeDay(day.tripId, day.id)}><i class="fa fa-trash"></i></button>
+                    </div></>
+                  </div>
                   }
 
                   {day.data.map((stops, index)=>{ 
@@ -182,7 +209,7 @@ export default function ShowTrip({showSelectedTrip, setBrowseTrip, setShowSelect
 
                   <hr></hr>
                 </div>
-              </li>
+              </div>
             )}
           </Draggable>
           )

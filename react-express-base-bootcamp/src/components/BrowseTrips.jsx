@@ -6,9 +6,26 @@ import { useCookies } from 'react-cookie';
 function show (trips, setShowSelectedTrip, showMine){
   console.log( showMine, 'mine')
   console.log(trips,'trips')
+
+  const [tripId, setTripId] = useState()
+  const handleInputChange=(e)=>{
+    setTripId(e.target.value)
+  }
+  const handleSearchSubmit =(e)=>{
+    e.preventDefault()
+    setShowSelectedTrip(tripId)
+  }
   return ( 
-    <div className="row">  
-      {showMine ? <h2>MY TRIPS</h2> : <h2>ALL TRIPS</h2>}
+    <div className="row mb-3">  
+      {showMine ? <h2>MY TRIPS</h2> : <><h2>ALL TRIPS</h2>
+      <div className="row mb-3">  
+      <form onSubmit={(e)=>handleSearchSubmit(e)}>
+        <input name="tripId" type="number" placeholder="know the trip id?"onChange={(e)=>handleInputChange(e)}/>&nbsp;<button className="button"><i class="fa fa-search"></i>
+        </button>
+      </form>
+      </div>
+      </>
+    }
            
       {trips && 
         trips.map((trip)=>{
