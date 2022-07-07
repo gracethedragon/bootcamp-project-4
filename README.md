@@ -1,4 +1,4 @@
-#Itineralise
+# Itineralise
 
 Itineralise is an app that allows users to document and share travel itineraries with their friends.
 
