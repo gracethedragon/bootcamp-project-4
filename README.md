@@ -1,5 +1,4 @@
-# bootcamp-project-4
-In Good Spirits!
+# In Good Spirits!
 
 An app that supports the sharing of cocktail recipe ideas.
 
