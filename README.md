@@ -7,5 +7,5 @@ Users can submit recipes of their own, and based on the ingredients and volumes 
 Try out the app at https://frozen-oasis-87032.herokuapp.com/login
 
 Test account credentials:
-Boozername: testacc
+Boozername: testacc <br/>
 Secret code: 123
